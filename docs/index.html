@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Stage Thermoelectric Energy Conversion (TEG) System Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Slate & Amber -->
+    <!-- Application Structure Plan: The application is designed as an interactive educational dashboard, moving from fundamental concepts to a hands-on simulation. The structure is: 1) Header & Intro, 2) Core Principle (Seebeck Effect), 3) The Challenge & Cascaded Solution, 4) The Interactive System Modeler (the app's centerpiece), and 5) Material Properties Deep Dive. This task-oriented flow was chosen over a linear article structure to facilitate active learning. It guides the user from "what is it?" to "why is it needed?" and finally to "how does it work in practice?", allowing them to explore and understand the system's dynamics through direct interaction. -->
+    <!-- Visualization & Content Choices: 
+        - Seebeck Effect: Report Info -> Basic TEG principle. Goal -> Inform. Viz -> HTML/CSS Diagram. Interaction -> Hover effects on p/n legs to show carrier movement. Justification -> A simple, lightweight visual to explain the core physics without external libraries.
+        - Cascaded System: Report Info -> Multi-stage structure. Goal -> Organize. Viz -> HTML/CSS flow diagram. Interaction -> Hover on stages to highlight. Justification -> Clearly illustrates the physical arrangement and thermal flow between stages.
+        - Thermal Gradient & Efficiency: Report Info -> Thermal gradient and efficiency calculation. Goal -> Compare/Analyze. Viz -> Chart.js Line Chart and dynamic text readouts. Interaction -> A temperature slider and material selectors dynamically update the chart and calculations. Justification -> This is the most effective way to show the relationship between temperature, materials, and performance, enabling user-driven exploration.
+        - Material Properties: Report Info -> Semiconductor materials (Bi2Te3, SiGe). Goal -> Compare. Viz -> Chart.js Line Chart comparing Figure of Merit (ZT) vs. Temperature. Interaction -> Tabs to switch between materials. Justification -> Allows for direct comparison of the key performance metric (ZT) that dictates a material's suitability for a specific temperature range.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .tab-button.active {
+            border-color: #f59e0b;
+            color: #f59e0b;
+            background-color: #fffbeb;
+        }
+        .teg-leg {
+            transition: all 0.3s ease-in-out;
+        }
+        .teg-leg:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-2">Interactive Multi-Stage TEG System Explorer</h1>
+            <p class="text-lg text-slate-600 max-w-3xl mx-auto">An interactive guide to understanding cascaded Thermoelectric Generators for waste heat recovery.</p>
+        </header>
+
+        <main>
+            <section id="principles" class="mb-16 p-8 bg-white rounded-2xl shadow-sm">
+                <h2 class="text-3xl font-bold text-slate-800 mb-4 text-center">The Core Principle: The Seebeck Effect</h2>
+                <p class="text-center text-slate-600 mb-8 max-w-3xl mx-auto">A thermoelectric generator (TEG) directly converts heat flow (a temperature difference) into electrical energy. This is possible due to the Seebeck effect, where a voltage is created across a junction of two different materials when subjected to a thermal gradient. The basic building block, shown below, consists of p-type and n-type semiconductor "legs".</p>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4 p-6 bg-slate-50 rounded-lg">
+                    <div class="text-center">
+                        <span class="text-lg font-semibold text-red-600">HOT SIDE (T<sub>H</sub>)</span>
+                        <div class="w-48 h-4 bg-red-400 rounded-t-lg mx-auto"></div>
+                    </div>
+                    <div class="flex gap-2">
+                         <div class="teg-leg w-24 p-4 bg-blue-100 border-2 border-blue-300 rounded-lg text-center cursor-pointer">
+                            <p class="font-bold text-blue-800">N-Type</p>
+                            <p class="text-sm text-blue-600">(Electron Flow)</p>
+                            <div class="text-4xl font-mono text-blue-700">&#8595;</div>
+                         </div>
+                         <div class="teg-leg w-24 p-4 bg-red-100 border-2 border-red-300 rounded-lg text-center cursor-pointer">
+                             <p class="font-bold text-red-800">P-Type</p>
+                             <p class="text-sm text-red-600">(Hole Flow)</p>
+                             <div class="text-4xl font-mono text-red-700">&#8595;</div>
+                         </div>
+                    </div>
+                     <div class="text-center">
+                        <div class="w-48 h-4 bg-blue-400 rounded-b-lg mx-auto"></div>
+                        <span class="text-lg font-semibold text-blue-600">COLD SIDE (T<sub>C</sub>)</span>
+                    </div>
+                    <div class="text-center md:text-left md:ml-6">
+                        <p class="font-bold text-xl text-amber-600">Voltage (V)</p>
+                        <p class="text-4xl font-mono text-slate-800">&#8652;</p>
+                        <p class="text-sm text-slate-500">Load Resistor</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="challenge" class="mb-16 p-8 bg-white rounded-2xl shadow-sm">
+                <h2 class="text-3xl font-bold text-slate-800 mb-4 text-center">The Challenge & The Cascaded Solution</h2>
+                <p class="text-center text-slate-600 mb-8 max-w-3xl mx-auto">A single thermoelectric material is only efficient within a specific temperature range. To effectively capture energy from a large thermal gradient (e.g., industrial waste heat), a multi-stage or "cascaded" system is used. Each stage is optimized with a different material to operate at peak efficiency in its designated temperature window, significantly boosting overall conversion efficiency.</p>
+                <div class="flex flex-col items-center p-6 bg-slate-50 rounded-lg">
+                    <div class="font-bold text-red-600 text-lg">Heat Source (e.g., 1000K)</div>
+                    <div class="text-3xl font-mono text-slate-400 my-2">&#8595;</div>
+                    <div class="w-full max-w-sm">
+                        <div class="bg-red-200 text-red-800 p-4 rounded-lg shadow-md text-center mb-2">
+                            <p class="font-bold">Stage 1: High-Temp Material</p>
+                            <p class="text-sm">(e.g., SiGe)</p>
+                        </div>
+                         <div class="text-3xl font-mono text-slate-400 my-2 text-center">&#8595;</div>
+                        <div class="bg-amber-200 text-amber-800 p-4 rounded-lg shadow-md text-center mb-2">
+                            <p class="font-bold">Stage 2: Mid-Temp Material</p>
+                            <p class="text-sm">(e.g., Skutterudites)</p>
+                        </div>
+                         <div class="text-3xl font-mono text-slate-400 my-2 text-center">&#8595;</div>
+                        <div class="bg-blue-200 text-blue-800 p-4 rounded-lg shadow-md text-center">
+                            <p class="font-bold">Stage 3: Low-Temp Material</p>
+                            <p class="text-sm">(e.g., Bi₂Te₃)</p>
+                        </div>
+                    </div>
+                    <div class="text-3xl font-mono text-slate-400 my-2">&#8595;</div>
+                    <div class="font-bold text-blue-600 text-lg">Heat Sink (e.g., 300K)</div>
+                </div>
+            </section>
+
+            <section id="simulator" class="mb-16 p-8 bg-white rounded-2xl shadow-lg">
+                <h2 class="text-3xl font-bold text-slate-800 mb-2 text-center">Interactive System Modeler</h2>
+                <p class="text-center text-slate-600 mb-8 max-w-3xl mx-auto">Adjust the system parameters below to see how they affect the thermal gradient and overall efficiency. This simulation models a three-stage TEG system. Select materials for each stage and set the hot side temperature to see the results in real-time.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="flex flex-col">
+                        <label for="stage1Mat" class="font-semibold mb-2 text-slate-700">Stage 1 Material (High Temp)</label>
+                        <select id="stage1Mat" class="p-3 bg-white border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                            <option value="sige">Silicon-Germanium (SiGe)</option>
+                            <option value="zintl">Zintl Phases</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="stage2Mat" class="font-semibold mb-2 text-slate-700">Stage 2 Material (Mid Temp)</label>
+                        <select id="stage2Mat" class="p-3 bg-white border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                             <option value="skutterudites">Skutterudites</option>
+                             <option value="halfheusler">Half-Heusler Alloys</option>
+                             <option value="tags">TAGS</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col">
+                        <label for="stage3Mat" class="font-semibold mb-2 text-slate-700">Stage 3 Material (Low Temp)</label>
+                        <select id="stage3Mat" class="p-3 bg-white border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                            <option value="bi2te3">Bismuth Telluride (Bi₂Te₃)</option>
+                            <option value="pbsnte">PbSnTe</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <label for="hotTemp" class="font-semibold mb-2 text-slate-700">Hot Side Temperature (T<sub>H</sub>): <span id="hotTempValue" class="font-bold text-amber-600">900</span> K</label>
+                    <input type="range" id="hotTemp" min="500" max="1300" value="900" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 bg-slate-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-xl text-center mb-4 text-slate-800">Calculated Thermal Gradient</h3>
+                        <div class="chart-container">
+                            <canvas id="gradientChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-center items-center gap-6 bg-slate-50 p-6 rounded-lg">
+                        <div class="text-center w-full">
+                            <h4 class="text-lg font-semibold text-slate-600">Overall System Efficiency (η)</h4>
+                            <p id="overallEfficiency" class="text-5xl font-bold text-amber-600">14.5%</p>
+                        </div>
+                        <div class="w-full border-t border-slate-200 my-2"></div>
+                        <div class="text-center w-full">
+                            <h4 class="text-lg font-semibold text-slate-600">Stage 1 Efficiency (η<sub>1</sub>)</h4>
+                            <p id="stage1Efficiency" class="text-2xl font-semibold text-red-600">0.0%</p>
+                        </div>
+                        <div class="text-center w-full">
+                            <h4 class="text-lg font-semibold text-slate-600">Stage 2 Efficiency (η<sub>2</sub>)</h4>
+                            <p id="stage2Efficiency" class="text-2xl font-semibold text-yellow-600">0.0%</p>
+                        </div>
+                        <div class="text-center w-full">
+                            <h4 class="text-lg font-semibold text-slate-600">Stage 3 Efficiency (η<sub>3</sub>)</h4>
+                            <p id="stage3Efficiency" class="text-2xl font-semibold text-blue-600">0.0%</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="materials" class="p-8 bg-white rounded-2xl shadow-sm">
+                 <h2 class="text-3xl font-bold text-slate-800 mb-2 text-center">Material Deep Dive</h2>
+                 <p class="text-center text-slate-600 mb-8 max-w-3xl mx-auto">The performance of a TEG material is quantified by its dimensionless Figure of Merit, ZT = (S²σ/κ)T, where S is the Seebeck coefficient, σ is electrical conductivity, and κ is thermal conductivity. A higher ZT value means better performance. Explore the ZT curves for common TEG materials below.</p>
+                <div class="flex justify-center flex-wrap gap-2 mb-8">
+                    <button class="tab-button active" data-mat="bi2te3">Bi₂Te₃</button>
+                    <button class="tab-button" data-mat="skutterudites">Skutterudites</button>
+                    <button class="tab-button" data-mat="sige">SiGe</button>
+                    <button class="tab-button" data-mat="halfheusler">Half-Heusler</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div id="material-info" class="prose max-w-none">
+                        <h3 id="mat-title" class="text-2xl font-bold text-slate-800"></h3>
+                        <p id="mat-desc"></p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-lg">
+                        <h3 class="font-bold text-xl text-center mb-4 text-slate-800">ZT vs. Temperature</h3>
+                        <div class="chart-container" style="height: 300px; max-height: 350px;">
+                            <canvas id="materialChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const materialData = {
+                bi2te3: {
+                    name: 'Bismuth Telluride (Bi₂Te₃)',
+                    description: 'The most common material for near-room-temperature applications like cooling and low-grade waste heat recovery. It has the highest ZT values at temperatures between 300K and 500K.',
+                    tempRange: [300, 550],
+                    avgZT: 1.0,
+                    ztCurve: { labels: [300, 400, 500, 600], data: [0.8, 1.0, 0.85, 0.6] }
+                },
+                pbsnte: {
+                    name: 'Lead Tin Telluride (PbSnTe)',
+                    description: 'An alternative to Bismuth Telluride for low-to-mid temperature ranges, known for its good thermoelectric properties.',
+                    tempRange: [300, 600],
+                    avgZT: 0.9,
+                },
+                tags: {
+                    name: 'TAGS ((GeTe)x(AgSbTe2)1-x)',
+                    description: 'TAGS alloys are p-type materials that exhibit high ZT values in the mid-temperature range, often used in conjunction with other materials in cascaded devices.',
+                    tempRange: [500, 800],
+                    avgZT: 1.2,
+                },
+                skutterudites: {
+                    name: 'Skutterudites (e.g., CoSb₃-based)',
+                    description: 'These materials are excellent for mid-range temperature applications (500K-900K). Filling their structural voids with heavy atoms (like Yb, La) significantly reduces thermal conductivity, boosting ZT.',
+                    tempRange: [500, 900],
+                    avgZT: 1.4,
+                    ztCurve: { labels: [400, 600, 800, 1000], data: [0.6, 1.2, 1.4, 1.1] }
+                },
+                halfheusler: {
+                    name: 'Half-Heusler Alloys',
+                    description: 'Known for their excellent mechanical stability and good thermoelectric performance at mid-to-high temperatures. They are promising for automotive and industrial waste heat applications.',
+                    tempRange: [600, 1000],
+                    avgZT: 1.0,
+                    ztCurve: { labels: [500, 700, 900, 1100], data: [0.5, 0.8, 1.0, 0.9] }
+                },
+                sige: {
+                    name: 'Silicon-Germanium (SiGe)',
+                    description: 'A robust alloy used for high-temperature applications (above 900K), famous for its use in radioisotope thermoelectric generators (RTGs) for deep-space missions. Nanostructuring helps reduce its thermal conductivity.',
+                    tempRange: [900, 1300],
+                    avgZT: 0.9,
+                    ztCurve: { labels: [800, 1000, 1200, 1400], data: [0.5, 0.9, 0.95, 0.7] }
+                },
+                zintl: {
+                    name: 'Zintl Phases (e.g., Yb₁₄MnSb₁₁)',
+                    description: 'A class of complex materials showing promise for high-temperature p-type applications. They possess an intrinsically low thermal conductivity, leading to high ZT values.',
+                    tempRange: [900, 1300],
+                    avgZT: 1.1,
+                }
+            };
+            
+            let gradientChart, materialChart;
+            const coldSideTemp = 300; 
+
+            const stage1Select = document.getElementById('stage1Mat');
+            const stage2Select = document.getElementById('stage2Mat');
+            const stage3Select = document.getElementById('stage3Mat');
+            const hotTempSlider = document.getElementById('hotTemp');
+            
+            function calculateEfficiency(Th, Tc, ZT_avg) {
+                const T_avg = (Th + Tc) / 2;
+                const ZT = ZT_avg * (T_avg / ((materialData[Object.keys(materialData)[0]].tempRange[0] + materialData[Object.keys(materialData)[0]].tempRange[1]) / 2));
+                const carnotEfficiency = (Th - Tc) / Th;
+                const conversionFactor = (Math.sqrt(1 + ZT) - 1) / (Math.sqrt(1 + ZT) + (Tc / Th));
+                return carnotEfficiency * conversionFactor;
+            }
+
+            function updateSimulator() {
+                const hotTemp = parseInt(hotTempSlider.value);
+                document.getElementById('hotTempValue').textContent = hotTemp;
+
+                const mat1 = materialData[stage1Select.value];
+                const mat2 = materialData[stage2Select.value];
+                const mat3 = materialData[stage3Select.value];
+
+                const t1_max = Math.min(hotTemp, mat1.tempRange[1]);
+                const t2_max = Math.min(t1_max, mat2.tempRange[1]);
+                const t3_max = Math.min(t2_max, mat3.tempRange[1]);
+
+                const t1 = Math.max(t2_max, mat1.tempRange[0]);
+                const t2 = Math.max(t3_max, mat2.tempRange[0]);
+                const t3 = coldSideTemp;
+                
+                const t_interface_1_2 = (t1 + t2) / 1.8; 
+                const t_interface_2_3 = (t2 + t3) / 1.7;
+                
+                const stage1_Th = hotTemp;
+                const stage1_Tc = t_interface_1_2 > mat2.tempRange[1] ? mat2.tempRange[1] : t_interface_1_2;
+                
+                const stage2_Th = stage1_Tc;
+                const stage2_Tc = t_interface_2_3 > mat3.tempRange[1] ? mat3.tempRange[1] : t_interface_2_3;
+                
+                const stage3_Th = stage2_Tc;
+                const stage3_Tc = coldSideTemp;
+                
+                let eta1 = 0, eta2 = 0, eta3 = 0;
+                
+                if (stage1_Th > stage1_Tc) {
+                    eta1 = calculateEfficiency(stage1_Th, stage1_Tc, mat1.avgZT);
+                }
+                if (stage2_Th > stage2_Tc) {
+                    eta2 = calculateEfficiency(stage2_Th, stage2_Tc, mat2.avgZT);
+                }
+                if (stage3_Th > stage3_Tc) {
+                    eta3 = calculateEfficiency(stage3_Th, stage3_Tc, mat3.avgZT);
+                }
+
+                const overallEta = eta1 + eta2 * (1 - eta1) + eta3 * (1 - eta1) * (1 - eta2);
+
+                document.getElementById('stage1Efficiency').textContent = `${(eta1 * 100).toFixed(2)}%`;
+                document.getElementById('stage2Efficiency').textContent = `${(eta2 * 100).toFixed(2)}%`;
+                document.getElementById('stage3Efficiency').textContent = `${(eta3 * 100).toFixed(2)}%`;
+                document.getElementById('overallEfficiency').textContent = `${(overallEta * 100).toFixed(1)}%`;
+                
+                updateGradientChart([hotTemp, stage1_Tc, stage2_Tc, coldSideTemp]);
+            }
+            
+            function updateGradientChart(temps) {
+                gradientChart.data.datasets[0].data = [
+                    { x: 'Hot Source', y: temps[0] },
+                    { x: 'Stage 1-2 Interface', y: temps[1] },
+                    { x: 'Stage 2-3 Interface', y: temps[2] },
+                    { x: 'Cold Sink', y: temps[3] }
+                ];
+                gradientChart.update();
+            }
+
+            function createGradientChart() {
+                const ctx = document.getElementById('gradientChart').getContext('2d');
+                gradientChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [{
+                            label: 'Temperature (K)',
+                            data: [],
+                            borderColor: '#f59e0b',
+                            backgroundColor: '#fffbeb',
+                            fill: true,
+                            tension: 0.1,
+                            pointRadius: 6,
+                            pointBackgroundColor: '#f59e0b'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.dataset.label}: ${context.parsed.y} K`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                title: { display: true, text: 'Temperature (K)' }
+                            },
+                            x: {
+                                title: { display: true, text: 'System Position' }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            function createMaterialChart(matKey) {
+                 if (materialChart) {
+                    materialChart.destroy();
+                }
+                const mat = materialData[matKey];
+                 if (!mat.ztCurve) return; 
+
+                const ctx = document.getElementById('materialChart').getContext('2d');
+                materialChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: mat.ztCurve.labels,
+                        datasets: [{
+                            label: 'Figure of Merit (ZT)',
+                            data: mat.ztCurve.data,
+                            borderColor: '#1e40af',
+                            backgroundColor: '#dbeafe',
+                            fill: true,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { title: { display: true, text: 'ZT (dimensionless)' } },
+                            x: { title: { display: true, text: 'Temperature (K)' } }
+                        }
+                    }
+                });
+            }
+
+            function updateMaterialInfo(matKey) {
+                const mat = materialData[matKey];
+                document.getElementById('mat-title').textContent = mat.name;
+                document.getElementById('mat-desc').textContent = mat.description;
+                
+                const tabButtons = document.querySelectorAll('.tab-button');
+                tabButtons.forEach(button => {
+                    button.classList.toggle('active', button.dataset.mat === matKey);
+                });
+                
+                createMaterialChart(matKey);
+            }
+            
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    updateMaterialInfo(e.target.dataset.mat);
+                });
+            });
+
+            stage1Select.addEventListener('change', updateSimulator);
+            stage2Select.addEventListener('change', updateSimulator);
+            stage3Select.addEventListener('change', updateSimulator);
+            hotTempSlider.addEventListener('input', updateSimulator);
+            
+            createGradientChart();
+            updateMaterialInfo('bi2te3');
+            updateSimulator();
+        });
+    </script>
+</body>
+</html>
