@@ -11,20 +11,22 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Slate & Amber -->
-    <!-- Application Structure Plan: The application is designed as an interactive educational dashboard, moving from fundamental concepts to a hands-on simulation. The structure is: 1) Header & Intro, 2) Core Principle (Seebeck Effect), 3) The Challenge & Cascaded Solution, 4) The Interactive System Modeler (the app's centerpiece), and 5) Material Properties Deep Dive. This task-oriented flow was chosen over a linear article structure to facilitate active learning. It guides the user from "what is it?" to "why is it needed?" and finally to "how does it work in practice?", allowing them to explore and understand the system's dynamics through direct interaction. -->
-    <!-- Visualization & Content Choices: 
-        - Seebeck Effect: Report Info -> Basic TEG principle. Goal -> Inform. Viz -> HTML/CSS Diagram. Interaction -> Hover effects on p/n legs to show carrier movement. Justification -> A simple, lightweight visual to explain the core physics without external libraries.
-        - Cascaded System: Report Info -> Multi-stage structure. Goal -> Organize. Viz -> HTML/CSS flow diagram. Interaction -> Hover on stages to highlight. Justification -> Clearly illustrates the physical arrangement and thermal flow between stages.
-        - Thermal Gradient & Efficiency: Report Info -> Thermal gradient and efficiency calculation. Goal -> Compare/Analyze. Viz -> Chart.js Line Chart and dynamic text readouts. Interaction -> A temperature slider and material selectors dynamically update the chart and calculations. Justification -> This is the most effective way to show the relationship between temperature, materials, and performance, enabling user-driven exploration.
-        - Material Properties: Report Info -> Semiconductor materials (Bi2Te3, SiGe). Goal -> Compare. Viz -> Chart.js Line Chart comparing Figure of Merit (ZT) vs. Temperature. Interaction -> Tabs to switch between materials. Justification -> Allows for direct comparison of the key performance metric (ZT) that dictates a material's suitability for a specific temperature range.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
+        
+        body.light-mode {
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        
+        body.dark-mode {
+            background-color: #0f172a;
+            color: #cbd5e1;
+        }
+        
         .chart-container {
             position: relative;
             width: 100%;
@@ -34,26 +36,153 @@
             height: 300px;
             max-height: 400px;
         }
+        
         @media (min-width: 768px) {
             .chart-container {
                 height: 400px;
             }
         }
-        .tab-button.active {
+        
+        .tab-button {
+            padding: 8px 16px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .light-mode .tab-button {
+            background-color: white;
+            color: #475569;
+        }
+        
+        .dark-mode .tab-button {
+            background-color: #1e293b;
+            color: #94a3b8;
+        }
+        
+        .light-mode .tab-button.active {
             border-color: #f59e0b;
             color: #f59e0b;
             background-color: #fffbeb;
         }
+        
+        .dark-mode .tab-button.active {
+            border-color: #f59e0b;
+            color: #f59e0b;
+            background-color: #78350f;
+        }
+        
         .teg-leg {
             transition: all 0.3s ease-in-out;
         }
+        
         .teg-leg:hover {
             transform: translateY(-4px);
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
+        
+        .dark-mode .teg-leg:hover {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 50;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        
+        .light-mode .theme-toggle {
+            background-color: #1e293b;
+            color: #fbbf24;
+        }
+        
+        .dark-mode .theme-toggle {
+            background-color: #fbbf24;
+            color: #1e293b;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .theme-icon {
+            font-size: 28px;
+        }
+        
+        /* Dark mode specific styles */
+        .dark-mode .bg-white {
+            background-color: #1e293b !important;
+        }
+        
+        .dark-mode .bg-slate-50 {
+            background-color: #334155 !important;
+        }
+        
+        .dark-mode .text-slate-800 {
+            color: #e2e8f0 !important;
+        }
+        
+        .dark-mode .text-slate-700 {
+            color: #cbd5e1 !important;
+        }
+        
+        .dark-mode .text-slate-600 {
+            color: #94a3b8 !important;
+        }
+        
+        .dark-mode .text-slate-500 {
+            color: #64748b !important;
+        }
+        
+        .dark-mode .border-slate-300 {
+            border-color: #475569 !important;
+        }
+        
+        .dark-mode .border-slate-200 {
+            border-color: #475569 !important;
+        }
+        
+        .dark-mode .bg-slate-200 {
+            background-color: #475569 !important;
+        }
+        
+        .dark-mode select,
+        .dark-mode input[type="range"] {
+            background-color: #334155;
+            color: #e2e8f0;
+            border-color: #475569;
+        }
+        
+        .dark-mode .shadow-sm {
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+        }
+        
+        .dark-mode .shadow-md {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+        }
+        
+        .dark-mode .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+        }
     </style>
 </head>
-<body class="text-slate-700">
+<body class="light-mode text-slate-700">
+    <!-- Theme Toggle Button -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span class="theme-icon" id="themeIcon">🌙</span>
+    </div>
 
     <div class="container mx-auto p-4 md:p-8 max-w-7xl">
 
@@ -75,12 +204,12 @@
                          <div class="teg-leg w-24 p-4 bg-blue-100 border-2 border-blue-300 rounded-lg text-center cursor-pointer">
                             <p class="font-bold text-blue-800">N-Type</p>
                             <p class="text-sm text-blue-600">(Electron Flow)</p>
-                            <div class="text-4xl font-mono text-blue-700">&#8595;</div>
+                            <div class="text-4xl font-mono text-blue-700">↓</div>
                          </div>
                          <div class="teg-leg w-24 p-4 bg-red-100 border-2 border-red-300 rounded-lg text-center cursor-pointer">
                              <p class="font-bold text-red-800">P-Type</p>
                              <p class="text-sm text-red-600">(Hole Flow)</p>
-                             <div class="text-4xl font-mono text-red-700">&#8595;</div>
+                             <div class="text-4xl font-mono text-red-700">↓</div>
                          </div>
                     </div>
                      <div class="text-center">
@@ -89,7 +218,7 @@
                     </div>
                     <div class="text-center md:text-left md:ml-6">
                         <p class="font-bold text-xl text-amber-600">Voltage (V)</p>
-                        <p class="text-4xl font-mono text-slate-800">&#8652;</p>
+                        <p class="text-4xl font-mono text-slate-800">⇌</p>
                         <p class="text-sm text-slate-500">Load Resistor</p>
                     </div>
                 </div>
@@ -100,24 +229,24 @@
                 <p class="text-center text-slate-600 mb-8 max-w-3xl mx-auto">A single thermoelectric material is only efficient within a specific temperature range. To effectively capture energy from a large thermal gradient (e.g., industrial waste heat), a multi-stage or "cascaded" system is used. Each stage is optimized with a different material to operate at peak efficiency in its designated temperature window, significantly boosting overall conversion efficiency.</p>
                 <div class="flex flex-col items-center p-6 bg-slate-50 rounded-lg">
                     <div class="font-bold text-red-600 text-lg">Heat Source (e.g., 1000K)</div>
-                    <div class="text-3xl font-mono text-slate-400 my-2">&#8595;</div>
+                    <div class="text-3xl font-mono text-slate-400 my-2">↓</div>
                     <div class="w-full max-w-sm">
                         <div class="bg-red-200 text-red-800 p-4 rounded-lg shadow-md text-center mb-2">
                             <p class="font-bold">Stage 1: High-Temp Material</p>
                             <p class="text-sm">(e.g., SiGe)</p>
                         </div>
-                         <div class="text-3xl font-mono text-slate-400 my-2 text-center">&#8595;</div>
+                         <div class="text-3xl font-mono text-slate-400 my-2 text-center">↓</div>
                         <div class="bg-amber-200 text-amber-800 p-4 rounded-lg shadow-md text-center mb-2">
                             <p class="font-bold">Stage 2: Mid-Temp Material</p>
                             <p class="text-sm">(e.g., Skutterudites)</p>
                         </div>
-                         <div class="text-3xl font-mono text-slate-400 my-2 text-center">&#8595;</div>
+                         <div class="text-3xl font-mono text-slate-400 my-2 text-center">↓</div>
                         <div class="bg-blue-200 text-blue-800 p-4 rounded-lg shadow-md text-center">
                             <p class="font-bold">Stage 3: Low-Temp Material</p>
                             <p class="text-sm">(e.g., Bi₂Te₃)</p>
                         </div>
                     </div>
-                    <div class="text-3xl font-mono text-slate-400 my-2">&#8595;</div>
+                    <div class="text-3xl font-mono text-slate-400 my-2">↓</div>
                     <div class="font-bold text-blue-600 text-lg">Heat Sink (e.g., 300K)</div>
                 </div>
             </section>
@@ -197,7 +326,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                     <div id="material-info" class="prose max-w-none">
                         <h3 id="mat-title" class="text-2xl font-bold text-slate-800"></h3>
-                        <p id="mat-desc"></p>
+                        <p id="mat-desc" class="text-slate-600"></p>
                     </div>
                     <div class="bg-slate-50 p-4 rounded-lg">
                         <h3 class="font-bold text-xl text-center mb-4 text-slate-800">ZT vs. Temperature</h3>
@@ -212,6 +341,63 @@
     </div>
 
     <script>
+        // Theme management
+        let currentTheme = 'light';
+        
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (currentTheme === 'light') {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+                themeIcon.textContent = '☀️';
+                currentTheme = 'dark';
+            } else {
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+                themeIcon.textContent = '🌙';
+                currentTheme = 'light';
+            }
+            
+            // Update charts with new theme colors
+            updateChartTheme();
+        }
+        
+        function updateChartTheme() {
+            const isDark = currentTheme === 'dark';
+            const textColor = isDark ? '#cbd5e1' : '#334155';
+            const gridColor = isDark ? '#475569' : '#e2e8f0';
+            
+            // Update gradient chart
+            if (window.gradientChart) {
+                window.gradientChart.options.plugins.tooltip.backgroundColor = isDark ? '#1e293b' : 'white';
+                window.gradientChart.options.plugins.tooltip.titleColor = textColor;
+                window.gradientChart.options.plugins.tooltip.bodyColor = textColor;
+                window.gradientChart.options.scales.x.ticks.color = textColor;
+                window.gradientChart.options.scales.y.ticks.color = textColor;
+                window.gradientChart.options.scales.x.title.color = textColor;
+                window.gradientChart.options.scales.y.title.color = textColor;
+                window.gradientChart.options.scales.x.grid.color = gridColor;
+                window.gradientChart.options.scales.y.grid.color = gridColor;
+                window.gradientChart.update();
+            }
+            
+            // Update material chart
+            if (window.materialChart) {
+                window.materialChart.options.plugins.tooltip.backgroundColor = isDark ? '#1e293b' : 'white';
+                window.materialChart.options.plugins.tooltip.titleColor = textColor;
+                window.materialChart.options.plugins.tooltip.bodyColor = textColor;
+                window.materialChart.options.scales.x.ticks.color = textColor;
+                window.materialChart.options.scales.y.ticks.color = textColor;
+                window.materialChart.options.scales.x.title.color = textColor;
+                window.materialChart.options.scales.y.title.color = textColor;
+                window.materialChart.options.scales.x.grid.color = gridColor;
+                window.materialChart.options.scales.y.grid.color = gridColor;
+                window.materialChart.update();
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', function () {
             const materialData = {
                 bi2te3: {
@@ -262,7 +448,8 @@
                 }
             };
             
-            let gradientChart, materialChart;
+            window.gradientChart = null;
+            window.materialChart = null;
             const coldSideTemp = 300; 
 
             const stage1Select = document.getElementById('stage1Mat');
@@ -329,25 +516,29 @@
             }
             
             function updateGradientChart(temps) {
-                gradientChart.data.datasets[0].data = [
+                window.gradientChart.data.datasets[0].data = [
                     { x: 'Hot Source', y: temps[0] },
                     { x: 'Stage 1-2 Interface', y: temps[1] },
                     { x: 'Stage 2-3 Interface', y: temps[2] },
                     { x: 'Cold Sink', y: temps[3] }
                 ];
-                gradientChart.update();
+                window.gradientChart.update();
             }
 
             function createGradientChart() {
+                const isDark = currentTheme === 'dark';
+                const textColor = isDark ? '#cbd5e1' : '#334155';
+                const gridColor = isDark ? '#475569' : '#e2e8f0';
+                
                 const ctx = document.getElementById('gradientChart').getContext('2d');
-                gradientChart = new Chart(ctx, {
+                window.gradientChart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         datasets: [{
                             label: 'Temperature (K)',
                             data: [],
                             borderColor: '#f59e0b',
-                            backgroundColor: '#fffbeb',
+                            backgroundColor: isDark ? 'rgba(245, 158, 11, 0.2)' : '#fffbeb',
                             fill: true,
                             tension: 0.1,
                             pointRadius: 6,
@@ -360,6 +551,9 @@
                         plugins: {
                             legend: { display: false },
                             tooltip: {
+                                backgroundColor: isDark ? '#1e293b' : 'white',
+                                titleColor: textColor,
+                                bodyColor: textColor,
                                 callbacks: {
                                     label: function(context) {
                                         return `${context.dataset.label}: ${context.parsed.y} K`;
@@ -370,10 +564,14 @@
                         scales: {
                             y: {
                                 beginAtZero: false,
-                                title: { display: true, text: 'Temperature (K)' }
+                                title: { display: true, text: 'Temperature (K)', color: textColor },
+                                ticks: { color: textColor },
+                                grid: { color: gridColor }
                             },
                             x: {
-                                title: { display: true, text: 'System Position' }
+                                title: { display: true, text: 'System Position', color: textColor },
+                                ticks: { color: textColor },
+                                grid: { color: gridColor }
                             }
                         }
                     }
@@ -381,14 +579,18 @@
             }
             
             function createMaterialChart(matKey) {
-                 if (materialChart) {
-                    materialChart.destroy();
+                if (window.materialChart) {
+                    window.materialChart.destroy();
                 }
                 const mat = materialData[matKey];
-                 if (!mat.ztCurve) return; 
+                if (!mat.ztCurve) return; 
+
+                const isDark = currentTheme === 'dark';
+                const textColor = isDark ? '#cbd5e1' : '#334155';
+                const gridColor = isDark ? '#475569' : '#e2e8f0';
 
                 const ctx = document.getElementById('materialChart').getContext('2d');
-                materialChart = new Chart(ctx, {
+                window.materialChart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: mat.ztCurve.labels,
@@ -396,17 +598,32 @@
                             label: 'Figure of Merit (ZT)',
                             data: mat.ztCurve.data,
                             borderColor: '#1e40af',
-                            backgroundColor: '#dbeafe',
+                            backgroundColor: isDark ? 'rgba(30, 64, 175, 0.2)' : '#dbeafe',
                             fill: true,
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: isDark ? '#1e293b' : 'white',
+                                titleColor: textColor,
+                                bodyColor: textColor
+                            }
+                        },
                         scales: {
-                            y: { title: { display: true, text: 'ZT (dimensionless)' } },
-                            x: { title: { display: true, text: 'Temperature (K)' } }
+                            y: { 
+                                title: { display: true, text: 'ZT (dimensionless)', color: textColor },
+                                ticks: { color: textColor },
+                                grid: { color: gridColor }
+                            },
+                            x: { 
+                                title: { display: true, text: 'Temperature (K)', color: textColor },
+                                ticks: { color: textColor },
+                                grid: { color: gridColor }
+                            }
                         }
                     }
                 });
