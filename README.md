@@ -15,12 +15,5 @@
 
 ---
 
-## Usage
-1. Open the [Presentation](https://devloper-gazi.github.io/Interactive-Multi-Stage-TEG-System-Explorer/).  
-2. Adjust system parameters and materials.  
-3. Observe efficiency changes and energy recovery potential.  
-
----
-
 ## License
 MIT – open for educational and research use.
