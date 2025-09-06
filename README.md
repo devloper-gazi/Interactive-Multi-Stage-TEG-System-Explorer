@@ -1,39 +1,35 @@
-# 🎛️ Interactive Multi-Stage TEG System Explorer
+# 🌙 Interactive Multi-Stage TEG System Explorer  
 
-An academic and interactive framework for investigating **cascaded thermoelectric generator (TEG) systems**.  
-This resource enables users to explore how multi-stage TEG architectures convert waste heat into electrical energy, with an emphasis on efficiency optimisation and system performance.
+An interactive guide to understanding how **cascaded Thermoelectric Generators (TEGs)** transform waste heat into useful electricity. ⚡  
 
-🔗 [Access the Interactive Explorer](https://devloper-gazi.github.io/Interactive-Multi-Stage-TEG-System-Explorer/)
-
----
-
-## Overview
-
-- **Interactive Simulations:** Configure and observe the performance of multi-stage TEG systems in real time.  
-- **Cascaded Architectures:** Analyse how sequential module arrangements enhance thermal utilisation and power generation.  
-- **Waste Heat Recovery:** Examine methods by which dissipated heat can be transformed into useful energy.  
+👉 Try it here: [Interactive Explorer](https://devloper-gazi.github.io/Interactive-Multi-Stage-TEG-System-Explorer/)  
 
 ---
 
-## Academic Relevance
+## 🔑 The Core Principle: The Seebeck Effect  
 
-- Serves as a **pedagogical tool** for students and researchers in thermodynamics, materials science, and sustainable energy.  
-- Illustrates the **integration of physics and engineering principles** in energy recovery technologies.  
-- Supports discussions on the role of thermoelectricity in **sustainable and resilient energy systems**.  
+At the heart of TEGs lies the **Seebeck Effect**: when two different materials are joined and exposed to a temperature difference, a voltage is produced.  
+
+A single TEG “leg” consists of:  
+
+- 🔥 **Hot Side (TH)**  
+- **n-type semiconductor** (electron flow ↓)  
+- **p-type semiconductor** (hole flow ↓)  
+- 🧊 **Cold Side (TC)**  
+- ⚡ **Voltage output across a load resistor**  
+
+That’s the basic recipe for turning a thermal gradient into electricity.  
 
 ---
 
-## Quick Start
+## ⚔️ The Challenge & 🪄 The Cascaded Solution  
 
-1. Open the interactive platform via the provided link.  
-2. Adjust simulation parameters such as the number of stages and temperature gradients.  
-3. Observe how variations influence efficiency and energy recovery.  
-4. Apply insights to broader contexts of waste heat utilisation and sustainable energy research.  
+A single thermoelectric material only works well in a **specific temperature range**.  
+But what if your heat source is blazing hot — say, 1000 K — and your sink is much cooler?  
 
----
+👉 Enter the **multi-stage (cascaded) TEG system**:  
+- **Stage 1:** High-temperature material (e.g. Silicon-Germanium, SiGe)  
+- **Stage 2:** Mid-temperature material (e.g. Skutterudites)  
+- **Stage 3:** Low-temperature material (e.g. Bismuth Telluride, Bi₂Te₃)  
 
-## Citation
-
-If this resource contributes to your research or academic work, please cite it as:
-
-> *Interactive Multi-Stage TEG System Explorer. (2025). Available at: https://devloper-gazi.github.io/Interactive-Multi-Stage-TEG-System-Explorer/*  
+Each stage is tuned for its temperature window, giving you **much higher overall efficiency** than any single material could manage.  
