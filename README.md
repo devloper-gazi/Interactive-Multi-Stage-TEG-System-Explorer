@@ -28,5 +28,4 @@ Curious to see it in action? Click here: [Explore Now](https://devloper-gazi.git
 2. Play around with the sliders and stages.  
 3. Watch as waste heat magically turns into electricity.  
 4. Smile, because you just made science fun. 😎
-
----
+   
