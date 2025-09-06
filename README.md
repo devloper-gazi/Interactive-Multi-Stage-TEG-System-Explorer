@@ -30,5 +30,3 @@ Curious to see it in action? Click here: [Explore Now](https://devloper-gazi.git
 4. Smile, because you just made science fun. 😎
 
 ---
-
-Whether you’re an engineer, a student, or just a tech enthusiast, this little explorer has something for you. Go ahead, have a peek, and let the heat do the talking!
