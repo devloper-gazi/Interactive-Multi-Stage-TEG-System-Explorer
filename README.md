@@ -1,35 +1,26 @@
-# 🌙 Interactive Multi-Stage TEG System Explorer  
+# 🌡️⚡ Multi-Stage TEG System Explorer
 
-An interactive guide to understanding how **cascaded Thermoelectric Generators (TEGs)** transform waste heat into useful electricity. ⚡  
+An interactive tool for studying **cascaded thermoelectric generators (TEGs)** and their role in **waste heat recovery**.  
+It demonstrates how multi-stage configurations improve conversion efficiency under varying thermal conditions.
 
-👉 Try it here: [Interactive Explorer](https://devloper-gazi.github.io/Interactive-Multi-Stage-TEG-System-Explorer/)  
-
----
-
-## 🔑 The Core Principle: The Seebeck Effect  
-
-At the heart of TEGs lies the **Seebeck Effect**: when two different materials are joined and exposed to a temperature difference, a voltage is produced.  
-
-A single TEG “leg” consists of:  
-
-- 🔥 **Hot Side (TH)**  
-- **n-type semiconductor** (electron flow ↓)  
-- **p-type semiconductor** (hole flow ↓)  
-- 🧊 **Cold Side (TC)**  
-- ⚡ **Voltage output across a load resistor**  
-
-That’s the basic recipe for turning a thermal gradient into electricity.  
+🔗 [Live Demo](https://devloper-gazi.github.io/Interactive-Multi-Stage-TEG-System-Explorer/)
 
 ---
 
-## ⚔️ The Challenge & 🪄 The Cascaded Solution  
+## Features
+- Interactive simulation of multi-stage TEGs  
+- Material comparison (ZT values, performance trends)  
+- Real-time efficiency and temperature plots  
+- Light/Dark mode support  
 
-A single thermoelectric material only works well in a **specific temperature range**.  
-But what if your heat source is blazing hot — say, 1000 K — and your sink is much cooler?  
+---
 
-👉 Enter the **multi-stage (cascaded) TEG system**:  
-- **Stage 1:** High-temperature material (e.g. Silicon-Germanium, SiGe)  
-- **Stage 2:** Mid-temperature material (e.g. Skutterudites)  
-- **Stage 3:** Low-temperature material (e.g. Bismuth Telluride, Bi₂Te₃)  
+## Usage
+1. Open the [demo link](https://devloper-gazi.github.io/Interactive-Multi-Stage-TEG-System-Explorer/).  
+2. Adjust system parameters and materials.  
+3. Observe efficiency changes and energy recovery potential.  
 
-Each stage is tuned for its temperature window, giving you **much higher overall efficiency** than any single material could manage.  
+---
+
+## License
+MIT – open for educational and research use.
