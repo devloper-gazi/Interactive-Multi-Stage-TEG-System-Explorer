@@ -1,4 +1,4 @@
-# ⚡ Interactive Multi-Stage TEG System Explorer
+# ♻️ Interactive Multi-Stage TEG System Explorer
 
 An interactive tool for studying **cascaded thermoelectric generators (TEGs)** and their role in **waste heat recovery**.  
 It demonstrates how multi-stage configurations improve conversion efficiency under varying thermal conditions.
