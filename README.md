@@ -18,7 +18,7 @@ Curious to see it in action? Click here: [Explore Now](https://devloper-gazi.git
 
 - No PhD required – just curiosity and a love for cool tech.  
 - See the magic of physics and engineering collide.  
-- Impress your friends with your newfound knowledge of heat-to-electricity wizardry.  
+- We're not performing magic, but our cauldron is boiling.  😂
 
 ---
 
@@ -26,6 +26,6 @@ Curious to see it in action? Click here: [Explore Now](https://devloper-gazi.git
 
 1. Open the link.  
 2. Play around with the sliders and stages.  
-3. Watch as waste heat magically turns into electricity.  
+3. Just play around with things and get acquainted with the Interactive System Modeler to see how to save electricity from heat.
 4. Smile, because you just made science fun. 😎
    
